@@ -1,0 +1,49 @@
+def quick_select(arr, k):
+    """
+    Find the k-th smallest element in an array using the Quickselect algorithm.
+
+    :param arr: List of numbers.
+    :param k: Position (1-based) of the smallest element to find.
+    :return: The k-th smallest element.
+    :raises IndexError: If k is out of the valid range.
+    """
+    # Validate k
+    if k < 1 or k > len(arr):
+        raise IndexError("k is out of range")
+
+    # Helper function to partition the array around a pivot
+    def partition(arr, low, high):
+        pivot = arr[high]  # Choose the last element as pivot
+        i = low - 1
+        for j in range(low, high):
+            if arr[j] <= pivot:
+                i += 1
+                arr[i], arr[j] = arr[j], arr[i]  # Swap elements
+        arr[i + 1], arr[high] = arr[high], arr[i + 1]
+        return i + 1  # Return the pivot index
+
+    # Recursive function to perform Quickselect
+    def quick_select_recursive(arr, low, high, k_index):
+        if low <= high:
+            pivot_index = partition(arr, low, high)  # Partition around the pivot
+            if pivot_index == k_index:
+                return arr[pivot_index]  # Found the k-th smallest element
+            elif pivot_index < k_index:
+                # Search in the right partition
+                return quick_select_recursive(arr, pivot_index + 1, high, k_index)
+            else:
+                # Search in the left partition
+                return quick_select_recursive(arr, low, pivot_index - 1, k_index)
+
+    # Start the Quickselect process
+    return quick_select_recursive(arr, 0, len(arr) - 1, k - 1)  # Convert k to 0-based index
+
+# Example usage
+if __name__ == "__main__":
+    arr = [41, 76, 45, 13, 67, 34, 93, 47]
+    k = 2
+    try:
+        result = quick_select(arr, k)
+        print(f"The {k}-th smallest element is: {result}")  # Output: 10
+    except IndexError as e:
+        print(f"Error: {e}")
